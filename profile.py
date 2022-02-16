@@ -16,8 +16,6 @@ import geni.rspec.pg as pg
 # Emulab specific extensions.
 import geni.rspec.emulab as emulab
 
-NSCMD = "sudo mkdir -p /root/setup && (if [ -d /local/repository ]; then sudo -H /local/repository/setup-grow-rootfs.sh 2>&1 | sudo tee /root/setup/setup-grow-rootfs.log; else sudo -H /tmp/setup/setup-grow-rootfs.sh 2>&1 | sudo tee /root/setup/setup-grow-rootfs.log; fi)"
-
 # Create a portal context, needed to defined parameters
 pc = portal.Context()
 
@@ -32,7 +30,8 @@ pc.defineParameter("nodeCount", "Number of Nodes", portal.ParameterType.INTEGER,
 # Pick your OS.
 imageList = [
     ('default', 'Default Image'),
-    ('urn:publicid:IDN+utah.cloudlab.us+image+sfcs-PG0:sfc_u20_5g_k8s', 'UBUNTU 20.04 K8s 5G'),
+    ('urn:publicid:IDN+utah.cloudlab.us+image+sfcs-PG0:sfc_u20_5g_k8s',
+     'UBUNTU 20.04 K8s 5G'),
     ('urn:publicid:IDN+emulab.net+image+emulab-ops//UBUNTU18-64-STD', 'UBUNTU 18.04'),
     ('urn:publicid:IDN+emulab.net+image+emulab-ops//UBUNTU20-64-STD', 'UBUNTU 20.04'),
     ('urn:publicid:IDN+emulab.net+image+emulab-ops//UBUNTU16-64-STD', 'UBUNTU 16.04'),
@@ -51,44 +50,51 @@ pc.defineParameter("phystype",  "Optional physical node type",
                    longDescription="Specify a physical node type (pc3000,d710,etc) " +
                    "instead of letting the resource mapper choose for you.")
 
+# Optional root filesystem size
+pc.defineParameter("rootFileSystemSize", "Root Filesystem Size",
+                   portal.ParameterType.INTEGER, 0,
+                   longDescription="The size in GB of a root file system to mount on each of your " +
+                   "nodes. 0 means maximum possible space is allocated.")
+
 # Optionally create XEN VMs instead of allocating bare metal nodes.
 pc.defineParameter("useVMs",  "Use XEN VMs",
                    portal.ParameterType.BOOLEAN, False,
                    longDescription="Create XEN VMs instead of allocating bare metal nodes.")
 
 # Optional link speed, normally the resource mapper will choose for you based on node availability
-pc.defineParameter("linkSpeed", "Link Speed",portal.ParameterType.INTEGER, 0,
-                   [(0,"Any"),(100000,"100Mb/s"),(1000000,"1Gb/s"),(10000000,"10Gb/s"),(25000000,"25Gb/s"),(100000000,"100Gb/s")],
+pc.defineParameter("linkSpeed", "Link Speed", portal.ParameterType.INTEGER, 0,
+                   [(0, "Any"), (100000, "100Mb/s"), (1000000, "1Gb/s"), (10000000,
+                                                                          "10Gb/s"), (25000000, "25Gb/s"), (100000000, "100Gb/s")],
                    advanced=True,
                    longDescription="A specific link speed to use for your lan. Normally the resource " +
                    "mapper will choose for you based on node availability and the optional physical type.")
-                   
+
 # For very large lans you might to tell the resource mapper to override the bandwidth constraints
 # and treat it a "best-effort"
 pc.defineParameter("bestEffort",  "Best Effort", portal.ParameterType.BOOLEAN, False,
-                    advanced=True,
-                    longDescription="For very large lans, you might get an error saying 'not enough bandwidth.' " +
-                    "This options tells the resource mapper to ignore bandwidth and assume you know what you " +
-                    "are doing, just give me the lan I ask for (if enough nodes are available).")
+                   advanced=True,
+                   longDescription="For very large lans, you might get an error saying 'not enough bandwidth.' " +
+                   "This options tells the resource mapper to ignore bandwidth and assume you know what you " +
+                   "are doing, just give me the lan I ask for (if enough nodes are available).")
 
 # Optional ephemeral blockstore
 pc.defineParameter("tempFileSystemSize", "Temporary Filesystem Size",
-                   portal.ParameterType.INTEGER, 0,advanced=True,
+                   portal.ParameterType.INTEGER, 0, advanced=True,
                    longDescription="The size in GB of a temporary file system to mount on each of your " +
                    "nodes. Temporary means that they are deleted when your experiment is terminated. " +
                    "The images provided by the system have small root partitions, so use this option " +
                    "if you expect you will need more space to build your software packages or store " +
                    "temporary files.")
-                   
-# Instead of a size, ask for all available space. 
+
+# Instead of a size, ask for all available space.
 pc.defineParameter("tempFileSystemMax",  "Temp Filesystem Max Space",
-                    portal.ParameterType.BOOLEAN, False,
-                    advanced=True,
-                    longDescription="Instead of specifying a size for your temporary filesystem, " +
-                    "check this box to allocate all available disk space. Leave the size above as zero.")
+                   portal.ParameterType.BOOLEAN, False,
+                   advanced=True,
+                   longDescription="Instead of specifying a size for your temporary filesystem, " +
+                   "check this box to allocate all available disk space. Leave the size above as zero.")
 
 pc.defineParameter("tempFileSystemMount", "Temporary Filesystem Mount Point",
-                   portal.ParameterType.STRING,"/mydata",advanced=True,
+                   portal.ParameterType.STRING, "/mydata", advanced=True,
                    longDescription="Mount the temporary file system at this mount point; in general you " +
                    "you do not need to change this, but we provide the option just in case your software " +
                    "is finicky.")
@@ -98,7 +104,8 @@ params = pc.bindParameters()
 
 # Check parameter validity.
 if params.nodeCount < 1:
-    pc.reportError(portal.ParameterError("You must choose at least 1 node.", ["nodeCount"]))
+    pc.reportError(portal.ParameterError(
+        "You must choose at least 1 node.", ["nodeCount"]))
 
 if params.tempFileSystemSize < 0 or params.tempFileSystemSize > 200:
     pc.reportError(portal.ParameterError("Please specify a size greater then zero and " +
@@ -127,7 +134,8 @@ for i in range(params.nodeCount):
     else:
         name = "node" + str(i)
         node = request.RawPC(name)
-        node.addService(pg.Execute(shell="sh", command=NSCMD))
+        node.addService(pg.Execute(shell="sh", command="sh /local/repository/setup-grow-rootfs.sh {}".format(
+            params.rootFileSystemSize)))
         pass
     if params.osImage and params.osImage != "default":
         node.disk_image = params.osImage
