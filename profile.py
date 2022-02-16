@@ -16,6 +16,8 @@ import geni.rspec.pg as pg
 # Emulab specific extensions.
 import geni.rspec.emulab as emulab
 
+NSCMD = "sudo mkdir -p /root/setup && (if [ -d /local/repository ]; then sudo -H /local/repository/setup-grow-rootfs.sh 2>&1 | sudo tee /root/setup/setup-grow-rootfs.log; else sudo -H /tmp/setup/setup-grow-rootfs.sh 2>&1 | sudo tee /root/setup/setup-grow-rootfs.log; fi)"
+
 # Create a portal context, needed to defined parameters
 pc = portal.Context()
 
@@ -125,6 +127,7 @@ for i in range(params.nodeCount):
     else:
         name = "node" + str(i)
         node = request.RawPC(name)
+        node.addService(pg.Execute(shell="sh", command=NSCMD))
         pass
     if params.osImage and params.osImage != "default":
         node.disk_image = params.osImage
