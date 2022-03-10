@@ -51,10 +51,10 @@ pc.defineParameter("phystype",  "Optional physical node type",
                    "instead of letting the resource mapper choose for you.")
 
 # Optional root filesystem size
-pc.defineParameter("rootFileSystemSize", "Root Filesystem Size",
-                   portal.ParameterType.INTEGER, 0,
-                   longDescription="The size in GB of a root file system to mount on each of your " +
-                   "nodes. 0 means maximum possible space is allocated.")
+#pc.defineParameter("rootFileSystemSize", "Root Filesystem Size",
+#                   portal.ParameterType.INTEGER, 0,
+#                   longDescription="The size in GB of a root file system to mount on each of your " +
+#                   "nodes. 0 means maximum possible space is allocated.")
 
 # Optionally create XEN VMs instead of allocating bare metal nodes.
 pc.defineParameter("useVMs",  "Use XEN VMs",
@@ -134,8 +134,7 @@ for i in range(params.nodeCount):
     else:
         name = "node" + str(i)
         node = request.RawPC(name)
-        node.addService(pg.Execute(shell="sh", command="sh /local/repository/setup-grow-rootfs.sh {}".format(
-            str(params.rootFileSystemSize))))
+        #node.addService(pg.Execute(shell="sh", command="sh /local/repository/setup-grow-rootfs.sh {}".format(str(params.rootFileSystemSize))))
         pass
     if params.osImage and params.osImage != "default":
         node.disk_image = params.osImage
