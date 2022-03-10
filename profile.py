@@ -135,7 +135,7 @@ for i in range(params.nodeCount):
         name = "node" + str(i)
         node = request.RawPC(name)
         node.addService(pg.Execute(shell="sh", command="sh /local/repository/setup-grow-rootfs.sh {}".format(
-            params.rootFileSystemSize)))
+            str(params.rootFileSystemSize))))
         pass
     if params.osImage and params.osImage != "default":
         node.disk_image = params.osImage
