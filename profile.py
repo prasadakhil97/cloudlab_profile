@@ -30,8 +30,8 @@ pc.defineParameter("nodeCount", "Number of Nodes", portal.ParameterType.INTEGER,
 # Pick your OS.
 imageList = [
     ('default', 'Default Image'),
-    ('urn:publicid:IDN+utah.cloudlab.us+image+sfcs-PG0:sfc_u20_k8s_5g',
-     'UBUNTU 20.04 K8s 5G'),
+    ('urn:publicid:IDN+utah.cloudlab.us+image+sfcs-PG0:sfc_u20_5g_k8s',
+     'UBUNTU 20.04 5G K8s'),
     ('urn:publicid:IDN+emulab.net+image+emulab-ops//UBUNTU18-64-STD', 'UBUNTU 18.04'),
     ('urn:publicid:IDN+emulab.net+image+emulab-ops//UBUNTU20-64-STD', 'UBUNTU 20.04'),
     ('urn:publicid:IDN+emulab.net+image+emulab-ops//UBUNTU16-64-STD', 'UBUNTU 16.04'),
