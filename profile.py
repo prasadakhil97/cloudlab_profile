@@ -36,6 +36,8 @@ imageList = [
      'UBUNTU 20.04 K8s 5G Utah'),
     ('urn:publicid:IDN+clemson.cloudlab.us+image+sfcs-PG0:sfc_u20_k8s_5g_clm',
      'UBUNTU 20.04 K8s 5G Clemson'),
+     ('urn:publicid:IDN+utah.cloudlab.us+image+sfcs-PG0:pcs_u22',
+     'UBUNTU 22.04 PCS'),
     ('urn:publicid:IDN+emulab.net+image+emulab-ops//UBUNTU18-64-STD', 'UBUNTU 18.04'),
     ('urn:publicid:IDN+emulab.net+image+emulab-ops//UBUNTU20-64-STD', 'UBUNTU 20.04'),
     ('urn:publicid:IDN+emulab.net+image+emulab-ops//UBUNTU16-64-STD', 'UBUNTU 16.04'),
