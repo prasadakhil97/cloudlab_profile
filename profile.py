@@ -32,7 +32,7 @@ imageList = [
     ('default', 'Default Image'),
     ('urn:publicid:IDN+utah.cloudlab.us+image+sfcs-PG0:sfc_u20_k8s_5g_uth',
      'UBUNTU 20.04 K8s 5G Utah'),
-    ('urn:publicid:IDN+utah.cloudlab.us+image+sfcs-PG0:pcs_u22',
+    ('urn:publicid:IDN+cloudlab.umass.edu+image+sfcs-PG0:ubuntu22',
      'UBUNTU 22.04 PCS'),
     ('urn:publicid:IDN+emulab.net+image+emulab-ops//UBUNTU18-64-STD', 'UBUNTU 18.04'),
     ('urn:publicid:IDN+emulab.net+image+emulab-ops//UBUNTU20-64-STD', 'UBUNTU 20.04'),
