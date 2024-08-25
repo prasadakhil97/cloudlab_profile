@@ -30,6 +30,8 @@ pc.defineParameter("nodeCount", "Number of Nodes", portal.ParameterType.INTEGER,
 # Pick your OS.
 imageList = [
     ('default', 'Default Image'),
+    ('urn:publicid:IDN+cloudlab.umass.edu+image+sfcs-PG0:ztx_ubuntu22',
+     'UBUNTU 22.04 ZTX'),
     ('urn:publicid:IDN+utah.cloudlab.us+image+sfcs-PG0:sfc_u20_k8s_5g_uth',
      'UBUNTU 20.04 K8s 5G Utah'),
     ('urn:publicid:IDN+cloudlab.umass.edu+image+sfcs-PG0:ubuntu22',
