@@ -50,7 +50,7 @@ pc.defineParameter("osImage", "Select OS image",
 
 # Optional physical type for all nodes.
 pc.defineParameter("phystype",  "Optional physical node type",
-                   portal.ParameterType.STRING, "",
+                   portal.ParameterType.NODETYPE, "",
                    longDescription="Specify a physical node type (pc3000,d710,etc) " +
                    "instead of letting the resource mapper choose for you.")
 
@@ -64,6 +64,13 @@ pc.defineParameter("phystype",  "Optional physical node type",
 pc.defineParameter("useVMs",  "Use XEN VMs",
                    portal.ParameterType.BOOLEAN, False,
                    longDescription="Create XEN VMs instead of allocating bare metal nodes.")
+
+# Optionally start X11 VNC server.
+pc.defineParameter("startVNC",  "Start X11 VNC on your nodes",
+                   portal.ParameterType.BOOLEAN, False,
+                   longDescription="Start X11 VNC server on your nodes. There will be " +
+                   "a menu option in the node context menu to start a browser based VNC " +
+                   "client. Works really well, give it a try!")
 
 # Optional link speed, normally the resource mapper will choose for you based on node availability
 pc.defineParameter("linkSpeed", "Link Speed", portal.ParameterType.INTEGER, 0,
@@ -80,6 +87,14 @@ pc.defineParameter("bestEffort",  "Best Effort", portal.ParameterType.BOOLEAN, F
                    longDescription="For very large lans, you might get an error saying 'not enough bandwidth.' " +
                    "This options tells the resource mapper to ignore bandwidth and assume you know what you " +
                    "are doing, just give me the lan I ask for (if enough nodes are available).")
+
+# Sometimes you want all of nodes on the same switch, Note that this option can make it impossible
+# for your experiment to map.
+pc.defineParameter("sameSwitch",  "No Interswitch Links", portal.ParameterType.BOOLEAN, False,
+                    advanced=True,
+                    longDescription="Sometimes you want all the nodes connected to the same switch. " +
+                    "This option will ask the resource mapper to do that, although it might make " +
+                    "it imppossible to find a solution. Do not use this unless you are sure you need it!")
 
 # Optional ephemeral blockstore
 pc.defineParameter("tempFileSystemSize", "Temporary Filesystem Size",
@@ -114,6 +129,12 @@ if params.nodeCount < 1:
 if params.tempFileSystemSize < 0 or params.tempFileSystemSize > 200:
     pc.reportError(portal.ParameterError("Please specify a size greater then zero and " +
                                          "less then 200GB", ["nodeCount"]))
+
+if params.phystype != "":
+    tokens = params.phystype.split(",")
+    if len(tokens) != 1:
+        pc.reportError(portal.ParameterError("Only a single type is allowed", ["phystype"]))
+
 pc.verifyParameters()
 
 # Create link/lan.
@@ -127,6 +148,8 @@ if params.nodeCount > 1:
         lan.best_effort = True
     elif params.linkSpeed > 0:
         lan.bandwidth = params.linkSpeed
+    if params.sameSwitch:
+        lan.setNoInterSwitchLinks()
     pass
 
 # Process nodes, adding to link or lan.
@@ -161,6 +184,15 @@ for i in range(params.nodeCount):
             bs.size = str(params.tempFileSystemSize) + "GB"
             pass
         bs.placement = "any"
+        pass
+    #
+    # Install and start X11 VNC. Calling this informs the Portal that you want a VNC
+    # option in the node context menu to create a browser VNC client.
+    #
+    # If you prefer to start the VNC server yourself (on port 5901) then add nostart=True. 
+    #
+    if params.startVNC:
+        node.startVNC()
         pass
     pass
 
