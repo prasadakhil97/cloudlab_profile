@@ -166,6 +166,10 @@ for i in range(params.nodeCount):
         pass
     if params.osImage and params.osImage != "default":
         node.disk_image = params.osImage
+
+        if params.nodeCount == 2 and i == 0:
+            node.diskimage = 'urn:publicid:IDN+emulab.net+image+emulab-ops//UBUNTU18-64-STD'
+                        
         pass
     # Add to lan
     if params.nodeCount > 1:
