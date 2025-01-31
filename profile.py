@@ -168,7 +168,7 @@ for i in range(params.nodeCount):
         node.disk_image = params.osImage
 
         if params.nodeCount == 2 and i == 0:
-            node.diskimage = 'urn:publicid:IDN+emulab.net+image+emulab-ops//UBUNTU18-64-STD'
+            node.disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops//UBUNTU18-64-STD'
                         
         pass
     # Add to lan
