@@ -165,11 +165,10 @@ for i in range(params.nodeCount):
         #node.addService(pg.Execute(shell="sh", command="sh /local/repository/setup-grow-rootfs.sh {}".format(str(params.rootFileSystemSize))))
         pass
     if params.osImage and params.osImage != "default":
-        node.disk_image = params.osImage
-
-        if params.nodeCount == 2 and i == 0:
-            node.disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops//UBUNTU18-64-STD'
-                        
+        if i == 0:
+          node.disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops//UBUNTU18-64-STD'
+        else:
+          node.disk_image = params.osImage    
         pass
     # Add to lan
     if params.nodeCount > 1:
